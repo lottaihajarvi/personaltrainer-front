@@ -19,6 +19,7 @@ import {Link} from 'react-router-dom';
             </li>
  </ul >
 </div>
+const [msg, setMsg] = React.useState('');
 
 const deleteCustomer = (link) => {
     if (window.confirm('Are you sure you want to delete?')) {

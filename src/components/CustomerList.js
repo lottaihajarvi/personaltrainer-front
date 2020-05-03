@@ -123,7 +123,6 @@ export default function CustomerList() {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
-    const [msg, setMsg] = React.useState('');
 
 
     React.useEffect(() => {
@@ -156,18 +155,6 @@ export default function CustomerList() {
           { title: 'City', field: 'city' },  
         ],
       });
-
-      const deleteCustomer = (link) => {
-        if (window.confirm('Are you sure you want to delete?')) {
-        fetch(link, {method: 'DELETE'})
-        .then(_ => getCustomers())
-        .then(_ => {
-            setMsg('Deleted successfully');
-            setOpen(true);
-        })
-        .catch(err => console.error(err))
-    }
-}
     
       return (
         <div className={classes.root}>
