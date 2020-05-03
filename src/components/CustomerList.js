@@ -37,7 +37,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
-import EventIcon from '@material-ui/icons/Event';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -123,6 +123,8 @@ export default function CustomerList() {
     const classes = useStyles();
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+    const [msg, setMsg] = React.useState('');
+
 
     React.useEffect(() => {
         getCustomers();
@@ -154,6 +156,18 @@ export default function CustomerList() {
           { title: 'City', field: 'city' },  
         ],
       });
+
+      const deleteCustomer = (link) => {
+        if (window.confirm('Are you sure you want to delete?')) {
+        fetch(link, {method: 'DELETE'})
+        .then(_ => getCustomers())
+        .then(_ => {
+            setMsg('Deleted successfully');
+            setOpen(true);
+        })
+        .catch(err => console.error(err))
+    }
+}
     
       return (
         <div className={classes.root}>
@@ -197,7 +211,7 @@ export default function CustomerList() {
         <List>
           {['Customers', 'Trainings', 'Calender'].map((text, index) => (
             <ListItem button key={text}>
-              {index % 2 === 0 ? <AccountBoxIcon /> : <DirectionsRunIcon /> }
+              <ListItemIcon>{index % 2 === 0 ? <AccountBoxIcon /> : <DirectionsRunIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
@@ -235,7 +249,7 @@ export default function CustomerList() {
               }
             }, 600);
           }),
-        onRowDelete: (oldData) =>
+          onRowDelete: (oldData) =>
           new Promise((resolve) => {
             setTimeout(() => {
               resolve();
