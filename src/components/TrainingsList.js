@@ -62,7 +62,6 @@ const tableIcons = {
 export default function TrainingsList() {
 
     const [trainings, setTrainings] = React.useState([]);
-    const [open, setOpen] = React.useState(false);
 
     React.useEffect(() => {
         getTrainings();
@@ -85,7 +84,8 @@ export default function TrainingsList() {
       });
     
       return (
-      <MaterialTable style={{margin:40}}
+      <div style={{marginLeft: 80, marginRight: 80, marginTop: 80}}>
+      <MaterialTable
       icons={tableIcons}
       title="Trainings"
       columns={state.columns}
@@ -128,5 +128,6 @@ export default function TrainingsList() {
           }),
       }}
     />
+    </div>
       );
     }
