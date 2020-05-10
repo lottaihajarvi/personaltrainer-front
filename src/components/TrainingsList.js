@@ -1,5 +1,7 @@
 import React from 'react';
 import MaterialTable from 'material-table';
+import Moment from 'react-moment';
+import moment from 'moment';
 
 import { forwardRef } from 'react';
 
@@ -18,26 +20,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-
-import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
-import EventIcon from '@material-ui/icons/Event';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -62,6 +46,8 @@ const tableIcons = {
 export default function TrainingsList() {
 
     const [trainings, setTrainings] = React.useState([]);
+    const [open, setOpen] = React.useState(false);
+    const [msg, setMsg] = React.useState('');
 
     React.useEffect(() => {
         getTrainings();
@@ -74,12 +60,31 @@ export default function TrainingsList() {
         .catch(err => console.error(err))
     }
 
+    const handleClose = () => {
+      setOpen(false);
+  }
+
+    const DeleteTraining = (link) => {
+     if (window.alert("Are you sure you want to delete?")) {
+      fetch(link, {method: 'DELETE'})
+        .then(_ => getTrainings())
+        .then(_ => {
+          setMsg('Deleted successfully');
+          setOpen(true);
+      })
+        .catch(err => console.error(err))
+    }
+  };
+
+    //const date = new Date();
+    //<Moment format='MMMM Do YYYY, h:mm a'>{date}</Moment>
+    
       const [state, setState] = React.useState({
         columns: [
           { title: 'Activity', field: 'activity' },
-          { title: 'Date', field: 'date'  },
-          { title: 'Duration(min)', field: 'duration' },  
-          { title: 'Customer', field: 'customer' },
+          //{ title: 'Date', field: 'date'.moment().format('MMMM Do YYYY, h:mm: a') },
+          { title: 'Duration(min)', field: 'duration' }, 
+          { title: 'Customer', field: 'customer', Cell: row => <div>{row.value.firstname} {row.value.lastname}</div> }, 
         ],
       });
     
@@ -90,44 +95,20 @@ export default function TrainingsList() {
       title="Trainings"
       columns={state.columns}
       data={trainings}
-      editable={{
-        onRowAdd: (newData) =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              resolve();
-              setState((prevState) => {
-                const data = [...prevState.data];
-                data.push(newData);
-                return { ...prevState, data };
-              });
-            }, 600);
-          }),
-        onRowUpdate: (newData, oldData) => 
-          new Promise((resolve) => {
-            setTimeout(() => {
-              resolve();
-              if (oldData) {
-                setState((prevState) => {
-                  const data = [...prevState.data];
-                  data[data.indexOf(oldData)] = newData;
-                  return { ...prevState, data };
-                });
-              }
-            }, 600);
-          }),
-        onRowDelete: (oldData) =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              resolve();
-              setState((prevState) => {
-                const data = [...prevState.data];
-                data.splice(data.indexOf(oldData), 1);
-                return { ...prevState, data };
-              });
-            }, 600);
-          }),
-      }}
+      actions={[
+        {
+          icon: () => <DeleteIcon />,
+          tooltip: 'Delete Training',
+          onClick: (rowData) => DeleteTraining(rowData)
+        }
+      ]}
     />
+    <Snackbar
+            open={open}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            message={msg}
+            />
     </div>
       );
     }

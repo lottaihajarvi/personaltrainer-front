@@ -19,6 +19,8 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -43,6 +45,8 @@ const tableIcons = {
 export default function CustomerList() {
 
     const [customers, setCustomers] = React.useState([]);
+    const [open, setOpen] = React.useState(false);
+    const [msg, setMsg] = React.useState('');
 
     React.useEffect(() => {
         getCustomers();
@@ -55,8 +59,100 @@ export default function CustomerList() {
         .catch(err => console.error(err))
     }
 
-    const [state, setState] = React.useState({
-        columns: [
+    const handleClose = () => {
+      setOpen(false);
+  }
+
+  const deleteCustomer = (link) => {
+    if (window.confirm('Are you sure you want to delete?')) {
+    fetch(link, {method: 'DELETE'})
+    .then(_ => getCustomers())
+    .then(_ => {
+        setMsg('Customer deleted successfully');
+        setOpen(true);
+    })
+    .catch(err => console.error(err))
+  }
+}
+
+  const editCustomer = (customer) => {
+    const editedCustomer = {
+      firstname: customer.firstname,
+      lastname: customer.lastname,
+      email: customer.email,
+      phone: customer.phone,
+      streetaddress: customer.streetaddress,
+      postcode: customer.postcode,
+      city: customer.city
+} 
+
+editedCustomer = (customer.links[0].href, editedCustomer)
+fetch( {
+  method: 'PUT',
+  headers: {
+      'Content-Type':'application/json'
+  },
+  body: JSON.stringify(customer)
+})
+.then(_ => getCustomers())
+.then(_ => {
+  setOpen(true);
+  setMsg('Update successful')
+})
+  .catch(err => console.error(err))
+}
+
+// add toimii
+const addCustomer = (customer) => {
+  fetch('https://customerrest.herokuapp.com/api/customers',
+  {
+      method: 'POST',
+      headers: {
+          'Content-Type':'application/json'
+      },
+      body: JSON.stringify(customer)
+    }
+  )
+  .then(_ => getCustomers())
+  .then(_ => {
+      setMsg('New customer added successfully');
+      setOpen(true);
+  })
+  .catch(err => console.error(err))
+}
+
+const saveCustomer = (customer) => {
+  addCustomer(customer)
+  .then(_ => {
+    setOpen(true);
+    setMsg('New customer saved')
+})
+  .catch(err => console.error(err))
+}
+
+const addTraining = (newTraining) => {
+  fetch('https://customerrest.herokuapp.com/api/trainings',
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(newTraining)
+  })
+}
+
+const saveTraining = (training) => {
+  addTraining(training)
+  .then(_ => {
+    setOpen(true);
+    setMsg('Training saved')
+})
+  .catch(err => console.error(err))
+}
+
+    const [state, setState] = React.useState({  
+      columns: [
+          { title: '', Cell: row => <Button size="small" color="primary" onClick={() => addTraining(row.original._links[0].href)}>Add Training</Button> },
           { title: 'First Name', field: 'firstname' },
           { title: 'Last Name', field: 'lastname' },
           { title: 'Email', field: 'email' },
@@ -74,44 +170,39 @@ export default function CustomerList() {
       title="Customers"
       columns={state.columns}
       data={customers}
+      actions={[
+        {
+          icon: () => <DeleteIcon />,
+          tooltip: 'Delete Customer',
+          onClick: (rowData) => deleteCustomer(rowData)
+        }      
+      ]}
       editable={{
-        onRowAdd: (newData) =>
-          new Promise((resolve) => {
-            setTimeout(() => {
+        onRowAdd: newData =>
+          new Promise(resolve => {
+            saveCustomer(newData);
               resolve();
-              setState((prevState) => {
-                const data = [...prevState.data];
-                data.push(newData);
-                return { ...prevState, data };
-              });
-            }, 600);
           }),
-        onRowUpdate: (newData, oldData) => 
-          new Promise((resolve) => {
-            setTimeout(() => {
+        onRowUpdate: (newData, _) => 
+          new Promise((resolve, _) => {
+            editCustomer(newData);
               resolve();
-              if (oldData) {
-                setState((prevState) => {
-                  const data = [...prevState.data];
-                  data[data.indexOf(oldData)] = newData;
-                  return { ...prevState, data };
-                });
-              }
-            }, 600);
-          }),
-        onRowDelete: (oldData) =>
-          new Promise((resolve) => {
-            setTimeout(() => {
-              resolve();
-              setState((prevState) => {
-                const data = [...prevState.data];
-                data.splice(data.indexOf(oldData), 1);
-                return { ...prevState, data };
-              });
-            }, 600);
-          }),
-      }}
+                }),
+        onRowDelete: oldData =>
+          new Promise(resolve => {
+            deleteCustomer(oldData);
+                    resolve();
+                })
+        }
+      }
     />
+    <Snackbar
+            open={open}
+            autoHideDuration={2000}
+            onClose={handleClose}
+            message={msg}
+            />
     </div>
+    
       );
     }

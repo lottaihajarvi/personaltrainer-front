@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import CustomerList from './components/CustomerList';
 import TrainingsList from './components/TrainingsList';
-import Calender from './components/Calender';
+import TrainingsCalendar from './components/TrainingsCalendar';
 import Stats from './components/Statistics';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -146,7 +146,7 @@ function App() {
           </ListItem>
           <ListItem button onClick={() => setValue(2)}>
             <ListItemIcon><EventIcon /></ListItemIcon>
-            <ListItemText primary='Calender' />
+            <ListItemText primary='Calendar' />
           </ListItem>
         </List>
       </Drawer>
@@ -162,7 +162,7 @@ function App() {
           <TrainingsList />
         ) :
         value === 2 ? (
-          <Calender />
+          <TrainingsCalendar />
         ) :
         (
           <Stats />
