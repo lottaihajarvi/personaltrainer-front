@@ -65,7 +65,7 @@ export default function CustomerList() {
 
   const deleteCustomer = (link) => {
     if (window.confirm('Are you sure you want to delete?')) {
-    fetch(link, {method: 'DELETE'})
+    fetch(link.links[0].href, {method: 'DELETE'})
     .then(_ => getCustomers())
     .then(_ => {
         setMsg('Customer deleted successfully');
@@ -86,8 +86,7 @@ export default function CustomerList() {
       city: customer.city
 } 
 
-editedCustomer = (customer.links[0].href, editedCustomer)
-fetch( {
+fetch(customer.links[0].href, {
   method: 'PUT',
   headers: {
       'Content-Type':'application/json'
@@ -102,7 +101,6 @@ fetch( {
   .catch(err => console.error(err))
 }
 
-// add toimii
 const addCustomer = (customer) => {
   fetch('https://customerrest.herokuapp.com/api/customers',
   {
@@ -130,7 +128,7 @@ const saveCustomer = (customer) => {
   .catch(err => console.error(err))
 }
 
-const addTraining = (newTraining) => {
+const AddTraining = (newTraining) => {
   fetch('https://customerrest.herokuapp.com/api/trainings',
   {
     method: 'POST',
@@ -142,7 +140,7 @@ const addTraining = (newTraining) => {
 }
 
 const saveTraining = (training) => {
-  addTraining(training)
+  AddTraining(training)
   .then(_ => {
     setOpen(true);
     setMsg('Training saved')
@@ -152,7 +150,7 @@ const saveTraining = (training) => {
 
     const [state, setState] = React.useState({  
       columns: [
-          { title: '', Cell: row => <Button size="small" color="primary" onClick={() => addTraining(row.original._links[0].href)}>Add Training</Button> },
+          { title: '', Cell: row => <Button size="small" color="primary" onClick={() => AddTraining(row.original._links[0].href)}>Add Training</Button> },
           { title: 'First Name', field: 'firstname' },
           { title: 'Last Name', field: 'lastname' },
           { title: 'Email', field: 'email' },
@@ -174,7 +172,7 @@ const saveTraining = (training) => {
         {
           icon: () => <DeleteIcon />,
           tooltip: 'Delete Customer',
-          onClick: (rowData) => deleteCustomer(rowData)
+          onClick: (event, rowData) => deleteCustomer(rowData)
         }      
       ]}
       editable={{
@@ -188,11 +186,6 @@ const saveTraining = (training) => {
             editCustomer(newData);
               resolve();
                 }),
-        onRowDelete: oldData =>
-          new Promise(resolve => {
-            deleteCustomer(oldData);
-                    resolve();
-                })
         }
       }
     />

@@ -64,27 +64,24 @@ export default function TrainingsList() {
       setOpen(false);
   }
 
-    const DeleteTraining = (link) => {
-     if (window.alert("Are you sure you want to delete?")) {
-      fetch(link, {method: 'DELETE'})
+    const deleteTraining = (link) => {
+     if (window.confirm("Are you sure you want to delete?")) {
+      fetch(link.links[0].href, {method: 'DELETE'})
         .then(_ => getTrainings())
         .then(_ => {
-          setMsg('Deleted successfully');
+          setMsg('Training deleted successfully');
           setOpen(true);
       })
         .catch(err => console.error(err))
     }
-  };
-
-    //const date = new Date();
-    //<Moment format='MMMM Do YYYY, h:mm a'>{date}</Moment>
+  }
     
       const [state, setState] = React.useState({
         columns: [
           { title: 'Activity', field: 'activity' },
-          //{ title: 'Date', field: 'date'.moment().format('MMMM Do YYYY, h:mm: a') },
+          { title: 'Date', field: 'date', render: rowData => moment(rowData).format('MM.DD.YYYY h:mm a') },
           { title: 'Duration(min)', field: 'duration' }, 
-          { title: 'Customer', field: 'customer', Cell: row => <div>{row.value.firstname} {row.value.lastname}</div> }, 
+          { title: 'Customer', field: 'customer' }, 
         ],
       });
     
@@ -99,7 +96,7 @@ export default function TrainingsList() {
         {
           icon: () => <DeleteIcon />,
           tooltip: 'Delete Training',
-          onClick: (rowData) => DeleteTraining(rowData)
+          onClick: (event, rowData) => deleteTraining(rowData)
         }
       ]}
     />
