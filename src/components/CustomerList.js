@@ -1,5 +1,6 @@
 import React from 'react';
 import MaterialTable from 'material-table';
+import AddTrainings from './AddTrainings';
 
 import { forwardRef } from 'react';
 
@@ -19,7 +20,6 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import DeleteIcon from '@material-ui/icons/Delete';
-import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 
 const tableIcons = {
@@ -128,7 +128,7 @@ const saveCustomer = (customer) => {
   .catch(err => console.error(err))
 }
 
-const AddTraining = (newTraining) => {
+const addTraining = (newTraining) => {
   fetch('https://customerrest.herokuapp.com/api/trainings',
   {
     method: 'POST',
@@ -136,11 +136,12 @@ const AddTraining = (newTraining) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(newTraining)
-  })
+  }
+)  
 }
 
 const saveTraining = (training) => {
-  AddTraining(training)
+  addTraining(training)
   .then(_ => {
     setOpen(true);
     setMsg('Training saved')
@@ -150,7 +151,7 @@ const saveTraining = (training) => {
 
     const [state, setState] = React.useState({  
       columns: [
-          { title: '', Cell: row => <Button size="small" color="primary" onClick={() => AddTraining(row.original._links[0].href)}>Add Training</Button> },
+          //{ title: '', field: 'links[0].href', render: rowData => <addTraining data={rowData} saveTraining={saveTraining} />  },
           { title: 'First Name', field: 'firstname' },
           { title: 'Last Name', field: 'lastname' },
           { title: 'Email', field: 'email' },

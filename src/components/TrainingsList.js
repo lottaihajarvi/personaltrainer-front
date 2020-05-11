@@ -1,6 +1,5 @@
 import React from 'react';
 import MaterialTable from 'material-table';
-import Moment from 'react-moment';
 import moment from 'moment';
 
 import { forwardRef } from 'react';
@@ -75,13 +74,14 @@ export default function TrainingsList() {
         .catch(err => console.error(err))
     }
   }
-    
+
+  //toISOString()????
       const [state, setState] = React.useState({
         columns: [
           { title: 'Activity', field: 'activity' },
-          { title: 'Date', field: 'date', render: rowData => moment(rowData).format('MM.DD.YYYY h:mm a') },
+          { title: 'Date', field: 'date', render: rowData => moment(rowData).format('MMMM Do YYYY, h:mm a') },
           { title: 'Duration(min)', field: 'duration' }, 
-          { title: 'Customer', field: 'customer' }, 
+          //{ title: 'Customer', field: 'customer' }, 
         ],
       });
     
