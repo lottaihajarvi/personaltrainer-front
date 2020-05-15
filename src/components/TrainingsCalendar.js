@@ -7,14 +7,28 @@ export default function TrainingsCalendar(){
 
 const localizer = momentLocalizer(moment)
 
-const [trainings, setTrainings] = useState([]);
+const [customerTrainings, setCustomerTrainings] = useState([]);
+
+useEffect(() => getTrainings(), []);
+
+    const getTrainings = () => {
+          fetch('https://customerrest.herokuapp.com/gettrainings',
+            {
+              method: 'GET',
+              headers: {
+                  'Content-Type':'application/json'
+              },
+            }
+          )
+            .then(response => response.json())  
+    }
 
 const TrainingsCalendar = props => (
   <div>
     <Calendar
       localizer={localizer}
       style={{height: 500, marginLeft: 80, marginRight: 80, marginTop: 80}}
-      events={trainings}
+      events={customerTrainings}
     />
   </div>
 )

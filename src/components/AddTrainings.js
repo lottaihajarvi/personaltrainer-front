@@ -9,14 +9,14 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 export default function AddTraining(props) {
 
   const [open, setOpen] = React.useState(false);
-  const [trainings, setTrainings] = React.useState({activity: '', date: '', duration: '', customer: '' });
+  const [customerTrainings, setCustomerTrainings] = React.useState({activity: '', date: '', duration: '', customer: '' });
 
   const handleClickOpen = () => {
       setOpen(true);
   }
 
   const handleClose = () => {
-      props.addTrainings(trainings);
+      props.addTrainings(customerTrainings);
       setOpen(false);
   }
 
@@ -26,11 +26,11 @@ export default function AddTraining(props) {
 
 
   const inputChanged = (event) => {
-     setTrainings({...trainings, [event.target.name]: event.target.value})
+     setCustomerTrainings({...customerTrainings, [event.target.name]: event.target.value})
   }
 
   const addTraining = () =>{
-    props.saveTrainings(trainings);
+    props.saveTrainings(customerTrainings);
     handleClose();
   }
 
@@ -40,14 +40,14 @@ export default function AddTraining(props) {
       Add Training
       </Button>
       <Dialog open={open} disableBackdropClick={true} disableEscapeKeyDown={true} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">New training</DialogTitle>
+        <DialogTitle id="form-dialog-title">New training for customer</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
             id="activity"
             name="activity"
-            value={trainings.activity}
+            value={customerTrainings.activity}
             onChange={inputChanged}
             label="Activity"
             fullWidth
@@ -56,7 +56,7 @@ export default function AddTraining(props) {
             margin="dense"
             id="date"
             name="date"
-            value={trainings.date}
+            value={customerTrainings.date}
             onChange={inputChanged}
             label="Date"
             fullWidth
@@ -65,19 +65,11 @@ export default function AddTraining(props) {
             margin="dense"
             id="duration"
             name="duration"
-            value={trainings.duration}
+            value={customerTrainings.duration}
             onChange={inputChanged}
             label="Duration(min)"
             fullWidth
           />
-          <TextField
-                    margin="dense"
-                    name="customer"
-                    value={trainings.customer}
-                    onChange={inputChanged}
-                    label="Customer"
-                    fullWidth
-                />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancel} color="primary">

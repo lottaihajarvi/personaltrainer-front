@@ -128,20 +128,24 @@ const saveCustomer = (customer) => {
   .catch(err => console.error(err))
 }
 
-const addTraining = (newTraining) => {
+const addTraining = (customerTrainings) => {
   fetch('https://customerrest.herokuapp.com/api/trainings',
   {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(newTraining)
+    body: {  
+      "date": '' , 
+      "activity": '', 
+      "duration": '',    
+      "customer" : "https://localhost:8080/api/customers/{id}" } 
   }
 )  
 }
 
-const saveTraining = (training) => {
-  addTraining(training)
+const saveTraining = (customerTrainings) => {
+  addTraining(customerTrainings)
   .then(_ => {
     setOpen(true);
     setMsg('Training saved')
@@ -151,7 +155,7 @@ const saveTraining = (training) => {
 
     const [state, setState] = React.useState({  
       columns: [
-          //{ title: '', field: 'links[0].href', render: rowData => <addTraining data={rowData} saveTraining={saveTraining} />  },
+          //{ title: '', field: 'links[0].href' , render: rowData => <addTraining data={rowData} saveTraining={saveTraining} />  },
           { title: 'First Name', field: 'firstname' },
           { title: 'Last Name', field: 'lastname' },
           { title: 'Email', field: 'email' },
